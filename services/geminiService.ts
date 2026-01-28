@@ -1,7 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!API_KEY) {
   console.warn("API_KEY is not set. The app will not function correctly.");
@@ -13,7 +13,7 @@ export const getCleansingAdvice = async (userInput: string, tags: string[] = [])
   try {
     // Usando o modelo mais recente recomendado para tarefas de texto
     const model = 'gemini-3-flash-preview';
-    
+
     const bookContext = `
       Princípios do livro "Limpeza Espiritual do Lar na Umbanda":
       - A limpeza visa eliminar energias negativas de pensamentos, sentimentos ou influências espirituais.
@@ -22,8 +22,8 @@ export const getCleansingAdvice = async (userInput: string, tags: string[] = [])
       - A preparação é chave: limpeza física da casa e banho de descarrego pessoal são essenciais antes de qualquer ritual.
     `;
 
-    const symptomsContext = tags.length > 0 
-      ? `Sintomas específicos selecionados pelo usuário: ${tags.join(', ')}.` 
+    const symptomsContext = tags.length > 0
+      ? `Sintomas específicos selecionados pelo usuário: ${tags.join(', ')}.`
       : '';
 
     const fullPrompt = `
@@ -50,13 +50,13 @@ export const getCleansingAdvice = async (userInput: string, tags: string[] = [])
       model: model,
       contents: fullPrompt,
     });
-    
+
     return response.text || "Não foi possível gerar um conselho no momento.";
 
   } catch (error) {
     console.error("Error calling Gemini API:", error);
     if (error instanceof Error && error.message.includes('API key not valid')) {
-       return "Erro: A chave da API não é válida. Por favor, verifique a configuração.";
+      return "Erro: A chave da API não é válida. Por favor, verifique a configuração.";
     }
     return "Ocorreu um erro ao buscar o conselho. Por favor, tente novamente mais tarde.";
   }
